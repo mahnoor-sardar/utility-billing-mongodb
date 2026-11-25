@@ -1,7 +1,7 @@
 # A MongoDB-Based Utility Bill and Meter Reading System
 
 COMSATS University Islamabad, Abbottabad Campus · Advanced Database Systems · Semester Project
-Group: Mahnoor (FA23-BCS-054) · Syed Hanzala Abid (FA23-BCS-112) · Abdur Rehman Jadoon (FA23-BCS-006)
+
 
 ## Project layout
 ```
@@ -9,25 +9,25 @@ utility-billing/
 ├── db/schemas.json            # $jsonSchema validators + index plan (single source of truth)
 ├── python/                    # PyMongo scripts (core verification)
 │   ├── config.py              # connection (replica set, w:majority)
-│   ├── setup_db.py            # create 8 collections, validators, indexes, view       [Mahnoor]
-│   ├── seed.py                # Faker generator: 3,000 meters / 72,000 readings       [Mahnoor]
-│   ├── crud.py                # CRUD + validation rejection tests                     [Mahnoor]
-│   ├── benchmark_indexes.py   # explain("executionStats") before / after              [Mahnoor]
+│   ├── setup_db.py            # create 8 collections, validators, indexes, view       
+│   ├── seed.py                # Faker generator: 3,000 meters / 72,000 readings      
+│   ├── crud.py                # CRUD + validation rejection tests                     
+│   ├── benchmark_indexes.py   # explain("executionStats") before / after             
 │   ├── billing.py, tariffs.py # slab billing formula + illustrative tariffs
-│   ├── payments.py            # ACID payment transaction, late fees                   [Hanzala]
-│   ├── demo_transactions.py   # commit / rollback / duplicate / paid-bill scenarios   [Hanzala]
-│   ├── demo_concurrency.py    # parallel workers paying one bill                      [Hanzala]
-│   ├── aggregations.py        # 5 aggregation reports                                 [Hanzala]
-│   ├── change_streams.py      # usage-spike + bill-status watchers                    [Hanzala]
-│   ├── ttl_sessions.py        # TTL payment-session expiry                            [Hanzala]
-│   ├── failover_writer.py     # continuous writer for the failover demo               [Abdur Rehman]
-│   └── shard_key_analysis.py  # shard key comparison on the dataset                   [Abdur Rehman]
+│   ├── payments.py            # ACID payment transaction, late fees                   
+│   ├── demo_transactions.py   # commit / rollback / duplicate / paid-bill scenarios   
+│   ├── demo_concurrency.py    # parallel workers paying one bill                      
+│   ├── aggregations.py        # 5 aggregation reports                                 
+│   ├── change_streams.py      # usage-spike + bill-status watchers                   
+│   ├── ttl_sessions.py        # TTL payment-session expiry                            
+│   ├── failover_writer.py     # continuous writer for the failover demo               
+│   └── shard_key_analysis.py  # shard key comparison on the dataset                   
 ├── mongosh/                   # shell scripts for screenshots (validation, explain)
 ├── admin/
-│   ├── replica-set/           # 3 mongod configs, start + init scripts, failover guide [Abdur Rehman]
-│   ├── rbac/                  # roles, users, permission tests                         [Abdur Rehman]
-│   ├── sharding/              # optional local sharded cluster                         [Abdur Rehman]
-│   └── backup/                # mongodump / drop / mongorestore / verify               [Abdur Rehman]
+│   ├── replica-set/           # 3 mongod configs, start + init scripts, failover guide 
+│   ├── rbac/                  # roles, users, permission tests                         
+│   ├── sharding/              # optional local sharded cluster                         
+│   └── backup/                # mongodump / drop / mongorestore / verify              
 ├── dashboard/
 │   ├── server/                # Express API (Node MongoDB driver)
 │   └── client/                # React + Vite thin dashboard

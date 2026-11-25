@@ -1,0 +1,871 @@
+{
+  "collections": {
+    "consumers": {
+      "bsonType": "object",
+      "required": [
+        "consumer_no",
+        "name",
+        "contact",
+        "address",
+        "category",
+        "status",
+        "outstanding_balance",
+        "created_at"
+      ],
+      "properties": {
+        "consumer_no": {
+          "bsonType": "string",
+          "pattern": "^C-[0-9]{6}$"
+        },
+        "name": {
+          "bsonType": "string",
+          "minLength": 2
+        },
+        "contact": {
+          "bsonType": "object",
+          "required": [
+            "phone"
+          ],
+          "properties": {
+            "phone": {
+              "bsonType": "string"
+            },
+            "email": {
+              "bsonType": "string",
+              "pattern": "^.+@.+$"
+            }
+          }
+        },
+        "address": {
+          "bsonType": "object",
+          "required": [
+            "street",
+            "city"
+          ],
+          "properties": {
+            "street": {
+              "bsonType": "string"
+            },
+            "city": {
+              "bsonType": "string"
+            },
+            "postal_code": {
+              "bsonType": "string"
+            }
+          }
+        },
+        "category": {
+          "enum": [
+            "residential",
+            "commercial",
+            "industrial"
+          ]
+        },
+        "status": {
+          "enum": [
+            "active",
+            "suspended",
+            "closed"
+          ]
+        },
+        "outstanding_balance": {
+          "bsonType": [
+            "int",
+            "long",
+            "double",
+            "decimal"
+          ],
+          "minimum": 0
+        },
+        "created_at": {
+          "bsonType": "date"
+        }
+      }
+    },
+    "meters": {
+      "bsonType": "object",
+      "required": [
+        "meter_no",
+        "consumer_id",
+        "utility_type",
+        "spec",
+        "tariff_category",
+        "install_date",
+        "status"
+      ],
+      "properties": {
+        "meter_no": {
+          "bsonType": "string",
+          "pattern": "^(E|W|G)-[0-9]{7}$"
+        },
+        "consumer_id": {
+          "bsonType": "objectId"
+        },
+        "utility_type": {
+          "enum": [
+            "electricity",
+            "water",
+            "gas"
+          ]
+        },
+        "spec": {
+          "bsonType": "object"
+        },
+        "tariff_category": {
+          "enum": [
+            "residential",
+            "commercial",
+            "industrial"
+          ]
+        },
+        "install_date": {
+          "bsonType": "date"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "archived"
+          ]
+        },
+        "last_reading": {
+          "bsonType": "object",
+          "required": [
+            "value",
+            "date"
+          ],
+          "properties": {
+            "value": {
+              "bsonType": [
+                "int",
+                "long",
+                "double",
+                "decimal"
+              ],
+              "minimum": 0
+            },
+            "date": {
+              "bsonType": "date"
+            },
+            "period": {
+              "bsonType": "string",
+              "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+            }
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "properties": {
+            "utility_type": {
+              "enum": [
+                "electricity"
+              ]
+            },
+            "spec": {
+              "bsonType": "object",
+              "required": [
+                "phase",
+                "sanctioned_load_kw"
+              ],
+              "properties": {
+                "phase": {
+                  "enum": [
+                    1,
+                    3
+                  ]
+                },
+                "sanctioned_load_kw": {
+                  "bsonType": [
+                    "int",
+                    "long",
+                    "double",
+                    "decimal"
+                  ],
+                  "minimum": 0
+                },
+                "tou": {
+                  "bsonType": "bool"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "utility_type": {
+              "enum": [
+                "water",
+                "gas"
+              ]
+            },
+            "spec": {
+              "bsonType": "object",
+              "required": [
+                "pipe_size_mm",
+                "unit"
+              ],
+              "properties": {
+                "pipe_size_mm": {
+                  "enum": [
+                    15,
+                    20,
+                    25,
+                    40,
+                    50
+                  ]
+                },
+                "unit": {
+                  "enum": [
+                    "m3"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "tariff_slabs": {
+      "bsonType": "object",
+      "required": [
+        "utility_type",
+        "category",
+        "effective_from",
+        "slabs",
+        "fixed_charge",
+        "tax_rate",
+        "late_fee_rate"
+      ],
+      "properties": {
+        "utility_type": {
+          "enum": [
+            "electricity",
+            "water",
+            "gas"
+          ]
+        },
+        "category": {
+          "enum": [
+            "residential",
+            "commercial",
+            "industrial"
+          ]
+        },
+        "effective_from": {
+          "bsonType": "date"
+        },
+        "effective_to": {
+          "bsonType": [
+            "date",
+            "null"
+          ]
+        },
+        "unit": {
+          "enum": [
+            "kWh",
+            "m3"
+          ]
+        },
+        "slabs": {
+          "bsonType": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "items": {
+            "bsonType": "object",
+            "required": [
+              "from",
+              "to",
+              "rate"
+            ],
+            "properties": {
+              "from": {
+                "bsonType": [
+                  "int",
+                  "long"
+                ],
+                "minimum": 1
+              },
+              "to": {
+                "bsonType": [
+                  "int",
+                  "long",
+                  "null"
+                ]
+              },
+              "rate": {
+                "bsonType": [
+                  "int",
+                  "long",
+                  "double",
+                  "decimal"
+                ],
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "fixed_charge": {
+          "bsonType": [
+            "int",
+            "long",
+            "double",
+            "decimal"
+          ],
+          "minimum": 0
+        },
+        "tax_rate": {
+          "bsonType": [
+            "int",
+            "long",
+            "double",
+            "decimal"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "late_fee_rate": {
+          "bsonType": [
+            "int",
+            "long",
+            "double",
+            "decimal"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "grace_days": {
+          "bsonType": [
+            "int",
+            "long"
+          ],
+          "minimum": 0
+        }
+      }
+    },
+    "meter_readings": {
+      "bsonType": "object",
+      "required": [
+        "meter_id",
+        "period",
+        "reading_date",
+        "previous_value",
+        "reading_value",
+        "units_consumed",
+        "recorded_by"
+      ],
+      "properties": {
+        "meter_id": {
+          "bsonType": "objectId"
+        },
+        "period": {
+          "bsonType": "string",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+        },
+        "reading_date": {
+          "bsonType": "date"
+        },
+        "previous_value": {
+          "bsonType": [
+            "int",
+            "long",
+            "double",
+            "decimal"
+          ],
+          "minimum": 0
+        },
+        "reading_value": {
+          "bsonType": [
+            "int",
+            "long",
+            "double",
+            "decimal"
+          ],
+          "minimum": 0
+        },
+        "units_consumed": {
+          "bsonType": [
+            "int",
+            "long",
+            "double",
+            "decimal"
+          ],
+          "minimum": 0
+        },
+        "recorded_by": {
+          "bsonType": "string"
+        },
+        "source": {
+          "enum": [
+            "manual",
+            "smart",
+            "estimated"
+          ]
+        }
+      }
+    },
+    "bills": {
+      "bsonType": "object",
+      "required": [
+        "bill_no",
+        "consumer_id",
+        "meter_id",
+        "utility_type",
+        "period",
+        "units",
+        "slab_breakdown",
+        "charges",
+        "total",
+        "amount_paid",
+        "balance",
+        "status",
+        "issue_date",
+        "due_date",
+        "version"
+      ],
+      "properties": {
+        "bill_no": {
+          "bsonType": "string",
+          "pattern": "^B-[0-9]{4}-[0-9]{2}-[0-9]{6}$"
+        },
+        "consumer_id": {
+          "bsonType": "objectId"
+        },
+        "meter_id": {
+          "bsonType": "objectId"
+        },
+        "utility_type": {
+          "enum": [
+            "electricity",
+            "water",
+            "gas"
+          ]
+        },
+        "period": {
+          "bsonType": "string",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+        },
+        "units": {
+          "bsonType": [
+            "int",
+            "long",
+            "double",
+            "decimal"
+          ],
+          "minimum": 0
+        },
+        "slab_breakdown": {
+          "bsonType": "array",
+          "items": {
+            "bsonType": "object",
+            "required": [
+              "from",
+              "units",
+              "rate",
+              "amount"
+            ]
+          }
+        },
+        "charges": {
+          "bsonType": "object",
+          "required": [
+            "energy",
+            "fixed",
+            "tax",
+            "late_fee"
+          ],
+          "properties": {
+            "energy": {
+              "bsonType": [
+                "int",
+                "long",
+                "double",
+                "decimal"
+              ],
+              "minimum": 0
+            },
+            "fixed": {
+              "bsonType": [
+                "int",
+                "long",
+                "double",
+                "decimal"
+              ],
+              "minimum": 0
+            },
+            "tax": {
+              "bsonType": [
+                "int",
+                "long",
+                "double",
+                "decimal"
+              ],
+              "minimum": 0
+            },
+            "late_fee": {
+              "bsonType": [
+                "int",
+                "long",
+                "double",
+                "decimal"
+              ],
+              "minimum": 0
+            }
+          }
+        },
+        "total": {
+          "bsonType": [
+            "int",
+            "long",
+            "double",
+            "decimal"
+          ],
+          "minimum": 0
+        },
+        "amount_paid": {
+          "bsonType": [
+            "int",
+            "long",
+            "double",
+            "decimal"
+          ],
+          "minimum": 0
+        },
+        "balance": {
+          "bsonType": [
+            "int",
+            "long",
+            "double",
+            "decimal"
+          ],
+          "minimum": 0
+        },
+        "status": {
+          "enum": [
+            "unpaid",
+            "partial",
+            "paid",
+            "overdue"
+          ]
+        },
+        "issue_date": {
+          "bsonType": "date"
+        },
+        "due_date": {
+          "bsonType": "date"
+        },
+        "late_fee_applied": {
+          "bsonType": "bool"
+        },
+        "version": {
+          "bsonType": [
+            "int",
+            "long"
+          ],
+          "minimum": 1
+        }
+      }
+    },
+    "payments": {
+      "bsonType": "object",
+      "required": [
+        "receipt_no",
+        "bill_id",
+        "consumer_id",
+        "amount",
+        "method",
+        "paid_at",
+        "status",
+        "idempotency_key"
+      ],
+      "properties": {
+        "receipt_no": {
+          "bsonType": "string",
+          "pattern": "^R-[0-9]{4}-[0-9]{7}$"
+        },
+        "bill_id": {
+          "bsonType": "objectId"
+        },
+        "consumer_id": {
+          "bsonType": "objectId"
+        },
+        "amount": {
+          "bsonType": [
+            "int",
+            "long",
+            "double",
+            "decimal"
+          ],
+          "minimum": 0, "exclusiveMinimum": true
+        },
+        "method": {
+          "enum": [
+            "cash",
+            "card",
+            "bank_transfer",
+            "mobile_wallet"
+          ]
+        },
+        "paid_at": {
+          "bsonType": "date"
+        },
+        "status": {
+          "enum": [
+            "completed",
+            "reversed"
+          ]
+        },
+        "idempotency_key": {
+          "bsonType": "string",
+          "minLength": 8
+        }
+      }
+    },
+    "audit_logs": {
+      "bsonType": "object",
+      "required": [
+        "entity",
+        "action",
+        "actor",
+        "ts"
+      ],
+      "properties": {
+        "entity": {
+          "bsonType": "string"
+        },
+        "entity_id": {
+          "bsonType": [
+            "objectId",
+            "null"
+          ]
+        },
+        "action": {
+          "bsonType": "string"
+        },
+        "actor": {
+          "bsonType": "string"
+        },
+        "before": {
+          "bsonType": [
+            "object",
+            "null"
+          ]
+        },
+        "after": {
+          "bsonType": [
+            "object",
+            "null"
+          ]
+        },
+        "details": {
+          "bsonType": "object"
+        },
+        "ts": {
+          "bsonType": "date"
+        }
+      }
+    },
+    "payment_sessions": {
+      "bsonType": "object",
+      "required": [
+        "bill_id",
+        "consumer_id",
+        "amount",
+        "token",
+        "state",
+        "created_at",
+        "expires_at"
+      ],
+      "properties": {
+        "bill_id": {
+          "bsonType": "objectId"
+        },
+        "consumer_id": {
+          "bsonType": "objectId"
+        },
+        "amount": {
+          "bsonType": [
+            "int",
+            "long",
+            "double",
+            "decimal"
+          ],
+          "minimum": 0, "exclusiveMinimum": true
+        },
+        "token": {
+          "bsonType": "string",
+          "minLength": 16
+        },
+        "state": {
+          "enum": [
+            "pending",
+            "completed",
+            "cancelled"
+          ]
+        },
+        "created_at": {
+          "bsonType": "date"
+        },
+        "expires_at": {
+          "bsonType": "date"
+        }
+      }
+    }
+  },
+  "expr_backstops": {
+    "meter_readings": {
+      "$gte": [
+        "$reading_value",
+        "$previous_value"
+      ]
+    }
+  },
+  "indexes": [
+    [
+      "consumers",
+      {
+        "consumer_no": 1
+      },
+      {
+        "unique": true,
+        "name": "ux_consumer_no"
+      }
+    ],
+    [
+      "meters",
+      {
+        "meter_no": 1
+      },
+      {
+        "unique": true,
+        "name": "ux_meter_no"
+      }
+    ],
+    [
+      "meters",
+      {
+        "consumer_id": 1,
+        "utility_type": 1
+      },
+      {
+        "name": "ix_consumer_utility"
+      }
+    ],
+    [
+      "meter_readings",
+      {
+        "meter_id": 1,
+        "reading_date": -1
+      },
+      {
+        "name": "ix_meter_date"
+      }
+    ],
+    [
+      "meter_readings",
+      {
+        "meter_id": 1,
+        "period": 1
+      },
+      {
+        "unique": true,
+        "name": "ux_meter_period"
+      }
+    ],
+    [
+      "bills",
+      {
+        "bill_no": 1
+      },
+      {
+        "unique": true,
+        "name": "ux_bill_no"
+      }
+    ],
+    [
+      "bills",
+      {
+        "consumer_id": 1,
+        "period": -1
+      },
+      {
+        "name": "ix_consumer_period"
+      }
+    ],
+    [
+      "bills",
+      {
+        "due_date": 1,
+        "status": 1
+      },
+      {
+        "name": "px_outstanding_due",
+        "partialFilterExpression": {
+          "balance": {
+            "$gt": 0
+          }
+        }
+      }
+    ],
+    [
+      "payments",
+      {
+        "bill_id": 1,
+        "paid_at": -1
+      },
+      {
+        "name": "ix_bill_paidat"
+      }
+    ],
+    [
+      "payments",
+      {
+        "idempotency_key": 1
+      },
+      {
+        "unique": true,
+        "name": "ux_idempotency_key"
+      }
+    ],
+    [
+      "payments",
+      {
+        "receipt_no": 1
+      },
+      {
+        "unique": true,
+        "name": "ux_receipt_no"
+      }
+    ],
+    [
+      "audit_logs",
+      {
+        "entity": 1,
+        "entity_id": 1,
+        "ts": -1
+      },
+      {
+        "name": "ix_entity_ts"
+      }
+    ],
+    [
+      "payment_sessions",
+      {
+        "expires_at": 1
+      },
+      {
+        "expireAfterSeconds": 0,
+        "name": "ttl_expires_at"
+      }
+    ],
+    [
+      "payment_sessions",
+      {
+        "token": 1
+      },
+      {
+        "unique": true,
+        "name": "ux_token"
+      }
+    ]
+  ]
+}

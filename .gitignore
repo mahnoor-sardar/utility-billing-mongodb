@@ -1,0 +1,14 @@
+data/
+backups/
+node_modules/
+__pycache__/
+*.log
+acked.log
+python/.resume_tokens.json
+admin/replica-set/rs-keyfile
+dist/
+
+venv/
+.env
+backups/
+*.log
